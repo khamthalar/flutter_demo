@@ -14,6 +14,9 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        fontFamily: 'Noto Sans Lao',
+        // useMaterial3: true,
+        // colorSchemeSeed: Colors.grey,
         primarySwatch: Colors.blueGrey,
       ),
       home: Login(),

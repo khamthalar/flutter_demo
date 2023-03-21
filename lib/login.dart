@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 
@@ -21,18 +22,20 @@ class _LoginState extends State<Login> {
             Column(
               children: [
                 Image.asset(
-                  'images/logo.png',
-                  height: 100,
-                  width: 100,
+                  'images/login_logo.png',
+                  height: 200,
+                  width: 300,
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
                   height: 55,
                   child: TextField(
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.key),
+                      prefixIcon: Transform.rotate(
+                        angle: 45 * math.pi / 180,
+                        child: const Icon(Icons.key)
+                      ),
                       hintText: 'ຊື່ເຂົ້າໃຊ້ລະບົບ ຫຼື ອີເມວ',
-                      hintStyle: const TextStyle(fontFamily: 'Noto Sans Lao'),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,
@@ -50,7 +53,6 @@ class _LoginState extends State<Login> {
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.lock),
                       hintText: 'ລະຫັດຜ່ານ',
-                      hintStyle: const TextStyle(fontFamily: 'Noto Sans Lao'),
                       suffixIcon: GestureDetector(
                       onTap: () {
                         setState(() {
@@ -79,7 +81,7 @@ class _LoginState extends State<Login> {
                     onPressed: () {
                         // Perform login action
                     },
-                    child: const Text('ເຂົ້າສູ່ລະບົບ',style: TextStyle(fontFamily: 'Noto Sans Lao'),),
+                    child: const Text('ເຂົ້າສູ່ລະບົບ',),
                     style: ButtonStyle(
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
@@ -93,7 +95,7 @@ class _LoginState extends State<Login> {
                 const SizedBox(height: 70),
               ],
             ),
-            const Text("Demo App By Tik v1.0", style: TextStyle(color: Colors.grey,fontStyle: FontStyle.italic),)
+            const Text("Demo App v1.0", style: TextStyle(color: Colors.grey,fontStyle: FontStyle.italic),)
           ],
         ),
       ),
