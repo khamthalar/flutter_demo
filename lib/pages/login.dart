@@ -17,6 +17,29 @@ class _LoginState extends State<Login> {
 
   bool _obscureText = true;
 
+  Future<void> _handleSignIn(BuildContext context) async{
+    UserCredential? userCredential = await _signInWithGoogle();
+    if (userCredential != null) {
+      final user = userCredential.user!;
+      //push page stack
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //   builder: (context) =>
+      //     Home(user: user, googleSignIn: _googleSignIn),
+      //   ),
+      // );
+      //clear stack before push
+      Navigator.pushAndRemoveUntil(
+        context, 
+        MaterialPageRoute(builder: (BuildContext context){
+        return Home(user: user, googleSignIn: _googleSignIn);
+      }), (r){
+        return false;
+      });
+    }
+  }
+
   Future<UserCredential?> _signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -126,22 +149,7 @@ class _LoginState extends State<Login> {
                   height: 55,
                   width: double.infinity,
                   child: ElevatedButton(
-                      onPressed: () async {
-                        
-                        UserCredential? userCredential =
-                            await _signInWithGoogle();
-                        if (userCredential != null) {
-                          final user = userCredential.user!;
-                          print("test");
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  Home(user: user, googleSignIn: _googleSignIn),
-                            ),
-                          );
-                        }
-                      },
+                      onPressed: () => _handleSignIn(context),
                       child: const Text(
                         'ເຂົ້າສູ່ລະບົບດ້ວຍ Google',
                       ),
@@ -149,7 +157,7 @@ class _LoginState extends State<Login> {
                           shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
-                          side: BorderSide.none,
+                           side: BorderSide.none,
                         ),
                       ))),
                 ),
