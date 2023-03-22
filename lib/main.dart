@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/login.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_demo/pages/login.dart';
+import 'package:flutter_demo/pages/home.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-  // This widget is the root of your application.
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,7 +25,16 @@ class MyApp extends StatelessWidget {
         // colorSchemeSeed: Colors.grey,
         primarySwatch: Colors.blueGrey,
       ),
-      home: Login(),
+      home: StreamBuilder(
+        stream: _auth.authStateChanges(),
+        builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+          if (snapshot.hasData) {
+            return Home(user: snapshot.data!, googleSignIn: _googleSignIn);
+          } else {
+            return Login();
+          }
+        },
+      ),
     );
   }
 }
