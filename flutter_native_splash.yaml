@@ -1,0 +1,5 @@
+flutter_native_splash:
+  lottie: images/lotties/coding.json
+  color: "#FFFFFF"
+  android_disable_fullscreen: false
+  android_gravity: "center"

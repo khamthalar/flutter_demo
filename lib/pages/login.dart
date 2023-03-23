@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,13 +13,15 @@ class Login extends StatefulWidget {
   State<Login> createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginState extends State<Login> with WidgetsBindingObserver {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
+  bool isKeyboardShowing = false;
+
   bool _obscureText = true;
 
-  Future<void> _handleSignIn(BuildContext context) async{
+  Future<void> _handleSignIn(BuildContext context) async {
     UserCredential? userCredential = await _signInWithGoogle();
     if (userCredential != null) {
       final user = userCredential.user!;
@@ -30,11 +34,10 @@ class _LoginState extends State<Login> {
       //   ),
       // );
       //clear stack before push
-      Navigator.pushAndRemoveUntil(
-        context, 
-        MaterialPageRoute(builder: (BuildContext context){
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (BuildContext context) {
         return Home(user: user, googleSignIn: _googleSignIn);
-      }), (r){
+      }), (r) {
         return false;
       });
     }
@@ -57,6 +60,32 @@ class _LoginState extends State<Login> {
 
     // Sign in the user with the credential
     return await _auth.signInWithCredential(credential);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    setState(() {
+      final mediaQuery = MediaQuery.of(context);
+      if (mediaQuery.viewInsets.bottom > 0) {
+        isKeyboardShowing = true;
+      } else {
+        isKeyboardShowing = false;
+      }
+      // log('isKeyboardShowing:$isKeyboardShowing');
+    });
   }
 
   @override
@@ -157,17 +186,20 @@ class _LoginState extends State<Login> {
                           shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
-                           side: BorderSide.none,
+                          side: BorderSide.none,
                         ),
                       ))),
                 ),
-                const SizedBox(height: 70),
+                isKeyboardShowing ? const SizedBox(height: 70)
+                : const SizedBox(height: 0),
               ],
             ),
+            isKeyboardShowing?
             const Text(
               "Demo App v1.0",
               style: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
             )
+            :const Text('')
           ],
         ),
       ),
