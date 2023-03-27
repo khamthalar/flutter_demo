@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_demo/pages/home.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -17,9 +18,30 @@ class _LoginState extends State<Login> with WidgetsBindingObserver {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  bool isKeyboardShowing = false;
+  bool _isSigningIn = false;
+
+  bool isKeyboardShowing = true;
 
   bool _obscureText = true;
+
+  bool get isSigningIn => _isSigningIn;
+  set isSigningIn(bool isSigningIn) {
+    if (isSigningIn) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+          );
+        }
+      );
+    } else {
+      Navigator.of(context).pop();
+    }
+    _isSigningIn = isSigningIn;
+  }
 
   Future<void> _handleSignIn(BuildContext context) async {
     UserCredential? userCredential = await _signInWithGoogle();
@@ -45,21 +67,25 @@ class _LoginState extends State<Login> with WidgetsBindingObserver {
 
   Future<UserCredential?> _signInWithGoogle() async {
     // Trigger the authentication flow
+    isSigningIn = true;
     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-    if (googleUser == null) return null;
-
+    if (googleUser == null) {
+      isSigningIn = false;
+      return null;
+    }
     // Obtain the auth details from the request
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
-
     // Create a new credential
     final OAuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-
     // Sign in the user with the credential
-    return await _auth.signInWithCredential(credential);
+    UserCredential _credential = await _auth.signInWithCredential(credential);
+    isSigningIn = false;
+    return _credential;
+    // return await _auth.signInWithCredential(credential);
   }
 
   @override
@@ -84,7 +110,6 @@ class _LoginState extends State<Login> with WidgetsBindingObserver {
       } else {
         isKeyboardShowing = false;
       }
-      // log('isKeyboardShowing:$isKeyboardShowing');
     });
   }
 
@@ -177,29 +202,34 @@ class _LoginState extends State<Login> with WidgetsBindingObserver {
                 SizedBox(
                   height: 55,
                   width: double.infinity,
-                  child: ElevatedButton(
+                  child: ElevatedButton.icon(
                       onPressed: () => _handleSignIn(context),
-                      child: const Text(
+                      icon: const FaIcon(FontAwesomeIcons.google,size: 24,color: Colors.white,),
+                      label: const Text(
                         'ເຂົ້າສູ່ລະບົບດ້ວຍ Google',
                       ),
                       style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.blueAccent),
                           shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: BorderSide.none,
-                        ),
-                      ))),
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              side: BorderSide.none,
+                            ),
+                          ))),
                 ),
-                isKeyboardShowing ? const SizedBox(height: 70)
-                : const SizedBox(height: 0),
+                isKeyboardShowing
+                    ? const SizedBox(height: 70)
+                    : const SizedBox(height: 0),
               ],
             ),
-            isKeyboardShowing?
-            const Text(
-              "Demo App v1.0",
-              style: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
-            )
-            :const Text('')
+            isKeyboardShowing
+                ? const Text(
+                    "Demo App v1.0",
+                    style: TextStyle(
+                        color: Colors.grey, fontStyle: FontStyle.italic),
+                  )
+                : const Text('')
           ],
         ),
       ),

@@ -9,7 +9,7 @@ import 'package:flutter_demo/pages/home.dart';
 // import 'package:flutter_demo/splash_screen.dart';
 
 void main() async {
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());
 }
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
           if (snapshot.hasData) {
             return Home(user: snapshot.data!, googleSignIn: _googleSignIn);
           } else {
-            return Login();
+            return const Login();
           }
         },
       ),
