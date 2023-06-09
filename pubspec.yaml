@@ -55,7 +55,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^1.0.0
-
+  shared_preferences: ^2.1.0
   # Icons
   font_awesome_flutter: ^10.4.0
 
@@ -81,8 +81,8 @@ flutter:
   assets:
     - images/
     - images/lotties/
-    - images/svg/
     - lib/pages/
+    - lib/components/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

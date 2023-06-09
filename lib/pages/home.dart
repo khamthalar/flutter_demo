@@ -35,7 +35,7 @@ class _HomeState extends State<Home> {
     await widget.googleSignIn.signOut();
     Navigator.pushAndRemoveUntil(context,
         MaterialPageRoute(builder: (BuildContext context) {
-      return Login();
+      return const Login();
     }), (r) {
       return false;
     });
@@ -44,20 +44,20 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     List<Widget> screen = [
-      Container(
+      SizedBox(
         width: double.infinity,
-        child: MainScreen(user: widget.user),
+        child: MainScreen(user: widget.user,googleSignIn:widget.googleSignIn),
       ),
       Container(
         width: double.infinity,
         padding: const EdgeInsets.all(10),
-        child: AccountScreen(),
+        child: const AccountScreen(),
 
       ),
       Container(
         width: double.infinity,
         padding: const EdgeInsets.all(10),
-        child: SettingScreen(),
+        child: const SettingScreen(),
       ),
     ];
     

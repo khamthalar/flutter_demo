@@ -1,10 +1,29 @@
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lottie/lottie.dart';
+import 'package:flutter_demo/pages/login.dart';
 
 class MainScreen extends StatelessWidget {
   final User user;
-  const MainScreen({Key? key,required this.user}) : super(key: key);
+  final GoogleSignIn googleSignIn;
+
+  const MainScreen({Key? key,required this.user, required this.googleSignIn}) : super(key: key);
+
+  Future<void> _handleSignOut(BuildContext context) async {
+    // sign out from Firebase Authentication
+    await FirebaseAuth.instance.signOut();
+    // sign out from Google Sign-In
+    await googleSignIn.signOut();
+    Navigator.pushAndRemoveUntil(context,
+        MaterialPageRoute(builder: (BuildContext context) {
+      return Login();
+    }), (r) {
+      return false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +31,7 @@ class MainScreen extends StatelessWidget {
         child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
+        SizedBox(
           width: double.infinity,
           // padding: const EdgeInsets.only(top: 15,),
           child: Column(
@@ -22,7 +41,7 @@ class MainScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   FloatingActionButton.small(
-                      onPressed: ()=>{},
+                      onPressed: ()=>_handleSignOut(context),
                       backgroundColor: Colors.white,
                       elevation: 0,
                       child: const Icon(
@@ -49,8 +68,15 @@ class MainScreen extends StatelessWidget {
                 radius: 35,
                 backgroundImage: NetworkImage(user.photoURL!),
               ),
-              Text('${user.displayName ?? ''}'),
-              Text('${user.email}')
+              Text(user.displayName ?? ''),
+              Text('${user.email}'),
+              Center(child: 
+                SizedBox(
+                  height: 400,
+                  width: double.infinity,
+                  child: Lottie.asset('images/lotties/hello.json')
+                ),
+              ),
             ],
           ),
         )
